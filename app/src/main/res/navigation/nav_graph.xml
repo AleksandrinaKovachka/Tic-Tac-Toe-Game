@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/EntryFragment">
+
+    <fragment
+        android:id="@+id/EntryFragment"
+        android:name="com.example.tic_tac_toe_game.EntryFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_entry">
+
+        <action
+            android:id="@+id/action_FirstFragment_to_SecondFragment"
+            app:destination="@id/GameFragment" />
+        <action
+            android:id="@+id/action_EntryFragment_to_statisticsFragment"
+            app:destination="@id/statisticsFragment" />
+        <action
+            android:id="@+id/action_EntryFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/GameFragment"
+        android:name="com.example.tic_tac_toe_game.GameFragment"
+        android:label="@string/second_fragment_label"
+        tools:layout="@layout/fragment_game">
+
+        <action
+            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            app:destination="@id/EntryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/statisticsFragment"
+        android:name="com.example.tic_tac_toe_game.StatisticsFragment"
+        android:label="fragment_statistics"
+        tools:layout="@layout/fragment_statistics" >
+        <action
+            android:id="@+id/action_statisticsFragment_to_EntryFragment"
+            app:destination="@id/EntryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.tic_tac_toe_game.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_settingsFragment_to_EntryFragment"
+            app:destination="@id/EntryFragment" />
+    </fragment>
+</navigation>
