@@ -1,11 +1,9 @@
 package com.example.tic_tac_toe_game.custom_view
 
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Path
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -24,9 +22,13 @@ class TicTacToeView : View {
     private val X_PARTITION_RATIO = 1 / 3f
     private val Y_PARTITION_RATIO = 1 / 3f
     private val numberOfRows = 3
+    private var hasBoardChange = false
+    private lateinit var coord: Pair<Int, Int>
+    private lateinit var playerSymbol: String
 
-    private var cellPressListener: CellPressedListener? = null
+    private val textPaint = Paint()
 
+    var cellPressListener: CellPressedListener? = null
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -39,6 +41,10 @@ class TicTacToeView : View {
 
         drawVerticalLines(canvas)
         drawHorizontalLines(canvas)
+        if (hasBoardChange) {
+            drawCell(canvas)
+            hasBoardChange = false
+        }
     }
 
     private fun drawVerticalLines(canvas: Canvas) {
@@ -56,13 +62,13 @@ class TicTacToeView : View {
         val x = event.x
         val y = event.y
 
-        val index = getNumberOfSelectedCell(x, y)
-        cellPressListener?.onCellPressed(index)
+        val indexes = getNumberOfSelectedCell(x, y)
+        cellPressListener?.onCellPressed(indexes.first, indexes.second)
 
         return super.onTouchEvent(event)
     }
 
-    private fun getNumberOfSelectedCell(x: Float, y: Float) : Int {
+    private fun getNumberOfSelectedCell(x: Float, y: Float) : Pair<Int, Int> {
         val xCoord= when {
             y < height * Y_PARTITION_RATIO -> {
                 0
@@ -90,10 +96,35 @@ class TicTacToeView : View {
         val index = numberOfRows * xCoord + yCoord
         Toast.makeText(context, "Coordinate: $xCoord : $yCoord and index: $index", Toast.LENGTH_LONG).show()
 
-        return index
+        return Pair(xCoord, yCoord)
+    }
+
+    fun fillCell(x: Int, y: Int, symbol: String) {
+        coord = Pair(x, y)
+        playerSymbol = symbol
+        hasBoardChange = true
+        invalidate()
+    }
+
+    private fun drawCell(canvas: Canvas) {
+        val xUnit = (width * X_PARTITION_RATIO).toInt()
+        val yUnit = (height * Y_PARTITION_RATIO).toInt()
+
+        val rect = Rect()
+        rect.contains(coord.first * xUnit, coord.second * yUnit, (coord.first + 1) * xUnit, (coord.second + 1) * yUnit)
+
+        val xOffset = textPaint.measureText(playerSymbol) * 0.5f
+        val yOffset = textPaint.fontMetrics.ascent * -0.4f
+        val textX = (rect.exactCenterX()) - xOffset
+        val textY = (rect.exactCenterY()) + yOffset
+        canvas.drawText(playerSymbol, textX, textY, textPaint)
+    }
+
+    fun resetView() {
+
     }
 
     interface CellPressedListener {
-        fun onCellPressed(index: Int)
+        fun onCellPressed(x: Int, y: Int)
     }
 }

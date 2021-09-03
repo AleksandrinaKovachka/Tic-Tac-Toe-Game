@@ -14,9 +14,6 @@ import com.example.tic_tac_toe_game.databinding.FragmentEntryBinding
 class EntryFragment : Fragment() {
 
     private var _binding: FragmentEntryBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(

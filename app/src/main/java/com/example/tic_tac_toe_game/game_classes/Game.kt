@@ -1,16 +1,18 @@
 package com.example.tic_tac_toe_game.game_classes
 
-class Game(private val botPlayer: Boolean) {
-    private val board = Board(3)
+class Game(botPlayer: Boolean, numberOfRows: Int) {
+    private val board = Board(numberOfRows)
     private var currentPlayer = CellState.O
     private var previousPlayer = CellState.X
     private val isBot = botPlayer
-    private var gameState: GameStatesListener? = null
+    //private var gameState: GameStatesListener? = null
 
-    fun makeMove(x: Int, y: Int) {
-        board.makeMove(x, y, currentPlayer)
+    fun makeMove(x: Int, y: Int) : Boolean {
+        if (!board.makeMove(x, y, currentPlayer)) {
+            return false
+        }
         //change view with player move
-        gameState?.changeView(x, y)
+        //gameState?.changeView(x, y)
         //change player
         changePlayer()
         if (!checkBoard() && isBot) {
@@ -19,19 +21,20 @@ class Game(private val botPlayer: Boolean) {
             //change player
             changePlayer()
             //change view with bot move
-            gameState?.changeView(x, y)
+            //gameState?.changeView(coord.first, coord.second)
         }
+        return true
     }
 
     private fun checkBoard() : Boolean {
         if (board.checkForWinner()) {
-            gameState?.hasWinner(currentPlayer.toString())
+            //gameState?.hasWinner(currentPlayer.toString())
             board.resetCells()
             return true
         }
 
         if (board.isFull()) {
-            gameState?.fullBoard()
+            //gameState?.fullBoard()
             board.resetCells()
             return true
         }
@@ -44,9 +47,31 @@ class Game(private val botPlayer: Boolean) {
         previousPlayer = state
     }
 
-    interface GameStatesListener {
-        fun hasWinner(winner: String)
-        fun fullBoard()
-        fun changeView(x: Int, y: Int)
+    fun getCurrentPlayer() : String {
+        return currentPlayer.toString()
     }
+
+    fun checkForWinner() : Boolean {
+        if (board.checkForWinner()) {
+            board.resetCells()
+            return true
+        }
+        return false
+    }
+
+    fun checkBoardIsFull() : Boolean {
+        if (board.isFull()) {
+            //gameState?.fullBoard()
+            board.resetCells()
+            return true
+        }
+        return false
+    }
+
+
+//    interface GameStatesListener {
+//        fun hasWinner(winner: String)
+//        fun fullBoard()
+//        fun changeView(x: Int, y: Int)
+//    }
 }
