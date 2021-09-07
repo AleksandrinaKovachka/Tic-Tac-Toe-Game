@@ -12,10 +12,6 @@ class Board(private val numberOfRows: Int) {
         return false
     }
 
-    fun getBoard() : Array<Array<CellState>> {
-        return cells
-    }
-
     fun resetCells() {
         cells = Array(count) {Array(count) {CellState.EMPTY} }
     }

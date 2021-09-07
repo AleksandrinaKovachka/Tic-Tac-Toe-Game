@@ -8,35 +8,30 @@ class Game(botPlayer: Boolean, numberOfRows: Int) {
     private lateinit var botMove : Pair<Int, Int>
     //private var gameState: GameStatesListener? = null
 
-    fun makeMove(x: Int, y: Int) : Boolean {
+    fun makeMove(x: Int, y: Int) : List<Move> {
+        var moves : MutableList<Move> = mutableListOf()
         if (!board.makeMove(x, y, currentPlayer)) {
-            return false
+            return moves.toList()
         }
-        //change view with player move
-        //gameState?.changeView(x, y)
-        //change player
+        moves.add(Move(x, y, currentPlayer.toString()))
         changePlayer()
+
         if (!checkBoard() && isBot) {
-            //makeBotMove
             botMove = board.makeBotMove()
-            //change player
+            moves.add(Move(botMove.first, botMove.second, currentPlayer.toString()))
             changePlayer()
-            //change view with bot move
-            //gameState?.changeView(coord.first, coord.second)
         }
-        return true
+        return moves
     }
 
     private fun checkBoard() : Boolean {
         if (board.checkForWinner()) {
             //gameState?.hasWinner(currentPlayer.toString())
-            board.resetCells()
             return true
         }
 
         if (board.isFull()) {
             //gameState?.fullBoard()
-            board.resetCells()
             return true
         }
         return false

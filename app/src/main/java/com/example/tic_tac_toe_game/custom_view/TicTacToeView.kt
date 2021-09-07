@@ -11,6 +11,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
+import com.example.tic_tac_toe_game.game_classes.Move
 
 
 class TicTacToeView : View {
@@ -25,9 +26,8 @@ class TicTacToeView : View {
     private val X_PARTITION_RATIO = 1 / 3f
     private val Y_PARTITION_RATIO = 1 / 3f
     private val numberOfRows = 3
-    private var hasBoardChange = false
-    private lateinit var coord: Pair<Int, Int>
-    private lateinit var playerSymbol: String
+    private lateinit var board: Array<Array<Rect>>
+    private lateinit var boardStates: Array<Array<String>>
 
     private val textPaint = Paint()
 
@@ -39,14 +39,48 @@ class TicTacToeView : View {
         setMeasuredDimension(size, size)
     }
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        init()
+    }
+
+    private fun init() {
+        paint.isAntiAlias = true
+        textPaint.isAntiAlias = true
+        textPaint.textSize = resources.displayMetrics.scaledDensity * 70
+
+        board = Array(3) { Array(3) { Rect() } }
+        boardStates = Array(3) { Array(3) { "" } }
+
+        val xUnit = (width * X_PARTITION_RATIO).toInt()
+        val yUnit = (height * Y_PARTITION_RATIO).toInt()
+
+        for (j in 0 until numberOfRows) {
+            for (i in 0 until numberOfRows) {
+                board[i][j] = Rect(i * xUnit, j * yUnit, (i + 1) * xUnit, (j + 1) * yUnit)
+            }
+        }
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         drawVerticalLines(canvas)
         drawHorizontalLines(canvas)
-        if (hasBoardChange) {
-            drawCell(canvas)
-            hasBoardChange = false
+        drawBoard(canvas)
+//        if (hasBoardChange) {
+//            drawCell(canvas)
+//            hasBoardChange = false
+//        }
+    }
+
+    private fun drawBoard(canvas: Canvas) {
+        for ((i, textArray) in boardStates.withIndex()) {
+            for ((j, text) in textArray.withIndex()) {
+                if (text.isNotEmpty()) {
+                    drawCell(canvas, board[i][j], text)
+                }
+            }
         }
     }
 
@@ -102,31 +136,31 @@ class TicTacToeView : View {
         return Pair(xCoord, yCoord)
     }
 
-    fun fillCell(x: Int, y: Int, symbol: String) {
-        coord = Pair(x, y)
-        playerSymbol = symbol
-        hasBoardChange = true
+    fun fillCell(moves: List<Move>) {
+        for (item in moves) {
+            boardStates[item.x][item.y] = item.state
+        }
 
-        path.reset()
         invalidate()
     }
 
-    private fun drawCell(canvas: Canvas) {
-        val xUnit = (width * X_PARTITION_RATIO).toInt()
-        val yUnit = (height * Y_PARTITION_RATIO).toInt()
+    private fun drawCell(canvas: Canvas, rect: Rect, state: String) {
+//        val xUnit = (width * X_PARTITION_RATIO).toInt()
+//        val yUnit = (height * Y_PARTITION_RATIO).toInt()
+//
+//        val rect = Rect(coord.first * xUnit, coord.second * yUnit, (coord.first + 1) * xUnit, (coord.second + 1) * yUnit)
 
-        val rect = Rect(coord.first * xUnit, coord.second * yUnit, (coord.first + 1) * xUnit, (coord.second + 1) * yUnit)
-        
-        textPaint.textSize = resources.displayMetrics.scaledDensity * 70
-        val xOffset = textPaint.measureText(playerSymbol) * 0.5f
+        val xOffset = textPaint.measureText(state) * 0.5f
         val yOffset = textPaint.fontMetrics.ascent * -0.4f
-        val textX = (rect.exactCenterX()) - xOffset
-        val textY = (rect.exactCenterY()) + yOffset
-        canvas.drawText(playerSymbol, textX, textY, textPaint)
+        val textX = (rect.exactCenterY()) - xOffset
+        val textY = (rect.exactCenterX()) + yOffset
+        canvas.drawText(state, textX, textY, textPaint)
     }
 
     fun resetView() {
-
+        boardStates = Array(3) { Array(3) { "" } }
+        path.reset()
+        invalidate()
     }
 
     interface CellPressedListener {

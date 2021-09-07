@@ -1,5 +1,6 @@
 package com.example.tic_tac_toe_game
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -37,11 +38,12 @@ class GameFragment : Fragment(), TicTacToeView.CellPressedListener {
 
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.ticTacToeView.cellPressListener = this
-        binding.information.text = gameViewModel.getCurrentPlayer()
+        binding.information.text = "${gameViewModel.getCurrentPlayer()}`s turn"
     }
 
     override fun onDestroyView() {
@@ -49,17 +51,32 @@ class GameFragment : Fragment(), TicTacToeView.CellPressedListener {
         _binding = null
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCellPressed(x: Int, y: Int) {
-        Toast.makeText(context,"test on cell pressed", Toast.LENGTH_LONG).show()
-        gameViewModel.makeMove(x, y)
-        Toast.makeText(context, "is new board: ${gameViewModel.newBoard}", Toast.LENGTH_LONG).show()
-        if (gameViewModel.newBoard) {
-            binding.ticTacToeView.fillCell(x, y, gameViewModel.getCurrentPlayer())
-            //if is bot
+        val moves = gameViewModel.makeMove(x, y)
+        if (moves.isNotEmpty()) {
+            binding.ticTacToeView.fillCell(moves)
+            binding.information.text = "${gameViewModel.getCurrentPlayer()}`s turn"//gameViewModel.getCurrentPlayer()
+        } else {
+            binding.information.text = "Cell is already selected\n${gameViewModel.getCurrentPlayer()}`s turn"
+        }
+
+        if (gameViewModel.hasWinner) {
+            binding.information.text = "Winner ${gameViewModel.getCurrentPlayer()}"
+            binding.ticTacToeView.resetView()
+        } else if (gameViewModel.isFull) {
+            binding.information.text = "Equality"
+            binding.ticTacToeView.resetView()
+        }
+
+//        Toast.makeText(context, "is new board: ${gameViewModel.newBoard}", Toast.LENGTH_LONG).show()
+//        if (gameViewModel.newBoard) {
+//            binding.ticTacToeView.fillCell(x, y, gameViewModel.getCurrentPlayer())
+//            //if is bot
 //            if (gameViewModel.isBotGame) {
 //                binding.ticTacToeView.fillCell(gameViewModel.botMove.first, gameViewModel.botMove.second, gameViewModel.getCurrentPlayer())
 //            }
-        }
+//        }
     }
 
     //check if have new board - custom view to make changes
