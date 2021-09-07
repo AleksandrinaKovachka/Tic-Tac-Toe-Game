@@ -1,14 +1,17 @@
 package com.example.tic_tac_toe_game.custom_view
 
+import android.R.attr.path
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
+
 
 class TicTacToeView : View {
 
@@ -18,7 +21,7 @@ class TicTacToeView : View {
 
     //private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val paint = Paint()
-
+    private var path = Path()
     private val X_PARTITION_RATIO = 1 / 3f
     private val Y_PARTITION_RATIO = 1 / 3f
     private val numberOfRows = 3
@@ -103,6 +106,8 @@ class TicTacToeView : View {
         coord = Pair(x, y)
         playerSymbol = symbol
         hasBoardChange = true
+
+        path.reset()
         invalidate()
     }
 
@@ -110,9 +115,9 @@ class TicTacToeView : View {
         val xUnit = (width * X_PARTITION_RATIO).toInt()
         val yUnit = (height * Y_PARTITION_RATIO).toInt()
 
-        val rect = Rect()
-        rect.contains(coord.first * xUnit, coord.second * yUnit, (coord.first + 1) * xUnit, (coord.second + 1) * yUnit)
-
+        val rect = Rect(coord.first * xUnit, coord.second * yUnit, (coord.first + 1) * xUnit, (coord.second + 1) * yUnit)
+        
+        textPaint.textSize = resources.displayMetrics.scaledDensity * 70
         val xOffset = textPaint.measureText(playerSymbol) * 0.5f
         val yOffset = textPaint.fontMetrics.ascent * -0.4f
         val textX = (rect.exactCenterX()) - xOffset

@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -40,6 +41,7 @@ class GameFragment : Fragment(), TicTacToeView.CellPressedListener {
         super.onViewCreated(view, savedInstanceState)
 
         binding.ticTacToeView.cellPressListener = this
+        binding.information.text = gameViewModel.getCurrentPlayer()
     }
 
     override fun onDestroyView() {
@@ -48,9 +50,15 @@ class GameFragment : Fragment(), TicTacToeView.CellPressedListener {
     }
 
     override fun onCellPressed(x: Int, y: Int) {
+        Toast.makeText(context,"test on cell pressed", Toast.LENGTH_LONG).show()
         gameViewModel.makeMove(x, y)
+        Toast.makeText(context, "is new board: ${gameViewModel.newBoard}", Toast.LENGTH_LONG).show()
         if (gameViewModel.newBoard) {
             binding.ticTacToeView.fillCell(x, y, gameViewModel.getCurrentPlayer())
+            //if is bot
+//            if (gameViewModel.isBotGame) {
+//                binding.ticTacToeView.fillCell(gameViewModel.botMove.first, gameViewModel.botMove.second, gameViewModel.getCurrentPlayer())
+//            }
         }
     }
 

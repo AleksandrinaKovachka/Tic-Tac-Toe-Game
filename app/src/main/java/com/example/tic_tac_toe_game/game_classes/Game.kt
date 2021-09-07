@@ -5,6 +5,7 @@ class Game(botPlayer: Boolean, numberOfRows: Int) {
     private var currentPlayer = CellState.O
     private var previousPlayer = CellState.X
     private val isBot = botPlayer
+    private lateinit var botMove : Pair<Int, Int>
     //private var gameState: GameStatesListener? = null
 
     fun makeMove(x: Int, y: Int) : Boolean {
@@ -17,7 +18,7 @@ class Game(botPlayer: Boolean, numberOfRows: Int) {
         changePlayer()
         if (!checkBoard() && isBot) {
             //makeBotMove
-            val coord = board.makeBotMove()
+            botMove = board.makeBotMove()
             //change player
             changePlayer()
             //change view with bot move
@@ -66,6 +67,10 @@ class Game(botPlayer: Boolean, numberOfRows: Int) {
             return true
         }
         return false
+    }
+
+    fun getBotMove() : Pair<Int, Int> {
+        return botMove
     }
 
 

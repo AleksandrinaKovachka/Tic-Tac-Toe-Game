@@ -24,7 +24,6 @@ class Board(private val numberOfRows: Int) {
         if (checkHorizontal() || checkVertical() || checkDiagonal() || checkSecondDiagonal()) {
             return true
         }
-
         return false
     }
 
@@ -32,8 +31,8 @@ class Board(private val numberOfRows: Int) {
         var haveWinner : Boolean
         for (i in 0 until count) {
             haveWinner = true
-            for (j in 0 until count - 1) {
-                if (cells[i][j] != cells[i][j + 1]) {
+            for (j in 0..count - 2) {
+                if (cells[i][j] != cells[i][j + 1] || cells[i][j] == CellState.EMPTY) {
                     haveWinner = false
                     break
                 }
@@ -50,8 +49,8 @@ class Board(private val numberOfRows: Int) {
         var haveWinner : Boolean
         for (j in 0 until count) {
             haveWinner = true
-            for (i in 0 until count - 1) {
-                if (cells[i][j] != cells[i + 1][j]) {
+            for (i in 0..count - 2) {
+                if (cells[i][j] != cells[i + 1][j] || cells[i][j] == CellState.EMPTY) {
                     haveWinner = false
                     break
                 }
@@ -66,7 +65,7 @@ class Board(private val numberOfRows: Int) {
 
     private fun checkDiagonal() : Boolean {
         for (i in 0 until count) {
-            if (cells[i][i] != cells[i + 1][i + 1]) {
+            if (cells[i][i] != cells[i + 1][i + 1] || cells[i][i] == CellState.EMPTY) {
                 return false
             }
         }
@@ -78,7 +77,7 @@ class Board(private val numberOfRows: Int) {
         var index = count - 1
 
         for (i in 0 until count){
-            if (cells[i][index] != cells[i + 1][index - 1]){
+            if (cells[i][index] != cells[i + 1][index - 1] || cells[i][i] == CellState.EMPTY){
                 return false
             }
             index -= 1
