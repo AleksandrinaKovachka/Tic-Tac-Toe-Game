@@ -20,7 +20,6 @@ class TicTacToeView : View {
 
     constructor(ctx: Context, attrs: AttributeSet) : super(ctx, attrs)
 
-    //private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val paint = Paint()
     private var path = Path()
     private val X_PARTITION_RATIO = 1 / 3f
@@ -68,10 +67,6 @@ class TicTacToeView : View {
         drawVerticalLines(canvas)
         drawHorizontalLines(canvas)
         drawBoard(canvas)
-//        if (hasBoardChange) {
-//            drawCell(canvas)
-//            hasBoardChange = false
-//        }
     }
 
     private fun drawBoard(canvas: Canvas) {
@@ -145,11 +140,6 @@ class TicTacToeView : View {
     }
 
     private fun drawCell(canvas: Canvas, rect: Rect, state: String) {
-//        val xUnit = (width * X_PARTITION_RATIO).toInt()
-//        val yUnit = (height * Y_PARTITION_RATIO).toInt()
-//
-//        val rect = Rect(coord.first * xUnit, coord.second * yUnit, (coord.first + 1) * xUnit, (coord.second + 1) * yUnit)
-
         val xOffset = textPaint.measureText(state) * 0.5f
         val yOffset = textPaint.fontMetrics.ascent * -0.4f
         val textX = (rect.exactCenterY()) - xOffset

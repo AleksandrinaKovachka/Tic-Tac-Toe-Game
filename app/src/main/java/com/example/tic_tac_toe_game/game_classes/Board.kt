@@ -60,7 +60,7 @@ class Board(private val numberOfRows: Int) {
     }
 
     private fun checkDiagonal() : Boolean {
-        for (i in 0 until count) {
+        for (i in 0..count - 2) {
             if (cells[i][i] != cells[i + 1][i + 1] || cells[i][i] == CellState.EMPTY) {
                 return false
             }
@@ -72,8 +72,8 @@ class Board(private val numberOfRows: Int) {
     private fun checkSecondDiagonal() : Boolean {
         var index = count - 1
 
-        for (i in 0 until count){
-            if (cells[i][index] != cells[i + 1][index - 1] || cells[i][i] == CellState.EMPTY){
+        for (i in 0..count - 2){
+            if (cells[i][index] != cells[i + 1][index - 1] || cells[i][index] == CellState.EMPTY){
                 return false
             }
             index -= 1
@@ -111,75 +111,4 @@ class Board(private val numberOfRows: Int) {
 
         return freeCells[randPosition]
     }
-
-//    private val numberOfRows = 3
-//    private var cells = Array(numberOfRows * numberOfRows) {CellState.EMPTY}
-//
-//    fun makeMove(index: Int, state: CellState) : Array<CellState> {
-//        cells[index] = state
-//
-//        return cells
-//    }
-//
-//    fun resetCells() {
-//        cells = Array(numberOfRows * numberOfRows) {CellState.EMPTY}
-//    }
-//
-//    fun checkForWinner() : Boolean {
-//        if (checkHorizontal() || checkVertical() || checkDiagonals()) {
-//            return true
-//        }
-//
-//        return false
-//    }
-//
-//    private fun checkHorizontal() : Boolean {
-//        var index = 0
-//        var array : Array<CellState>
-//        var haveWinner = true
-//        while (index <= cells.size) {
-//            array = cells.slice(IntRange(index, index + numberOfRows)).toTypedArray()
-//            haveWinner = true
-//            for (i in array.indices - 1) {
-//                if (array[i] != array[i + 1]) {
-//                    haveWinner = false
-//                    break
-//                }
-//            }
-//            if (haveWinner) {
-//                return true
-//            }
-//            index += numberOfRows
-//        }
-//
-//        return false
-//    }
-//
-//    private fun checkVertical() : Boolean {
-//        var index = numberOfRows
-//        for (i in 0..numberOfRows) {
-//            if (cells[i] == cells[index] && cells[index] == cells[index + numberOfRows]) {
-//                return true
-//            }
-//            index += 1
-//        }
-//
-//        return false
-//    }
-//
-//    private fun checkDiagonals() : Boolean {
-//        if (cells[0] == cells[numberOfRows + 1] && cells[0] == cells[cells.size - 1]) {
-//            return true
-//        }
-//
-//        if (cells[numberOfRows - 1] == cells[numberOfRows + 1] && cells[numberOfRows + 1] == cells[numberOfRows * 2]) {
-//            return true
-//        }
-//
-//        return false
-//    }
-//
-//    fun isFull() : Boolean {
-//        return !cells.contains(CellState.EMPTY)
-//    }
 }

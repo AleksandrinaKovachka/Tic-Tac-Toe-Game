@@ -1,39 +1,49 @@
 package com.example.tic_tac_toe_game.game_classes
 
+import android.widget.Toast
+
 class Game(botPlayer: Boolean, numberOfRows: Int) {
     private val board = Board(numberOfRows)
     private var currentPlayer = CellState.O
     private var previousPlayer = CellState.X
     private val isBot = botPlayer
-    private lateinit var botMove : Pair<Int, Int>
-    //private var gameState: GameStatesListener? = null
 
     fun makeMove(x: Int, y: Int) : List<Move> {
-        var moves : MutableList<Move> = mutableListOf()
+        val moves : MutableList<Move> = mutableListOf()
         if (!board.makeMove(x, y, currentPlayer)) {
             return moves.toList()
         }
         moves.add(Move(x, y, currentPlayer.toString()))
-        changePlayer()
 
-        if (!checkBoard() && isBot) {
-            botMove = board.makeBotMove()
+        if (checkAndChangePlayer()) {
+            return moves
+        }
+
+        if (isBot) {
+            val botMove = board.makeBotMove()
             moves.add(Move(botMove.first, botMove.second, currentPlayer.toString()))
-            changePlayer()
+
+            if (checkAndChangePlayer()) {
+                return moves
+            }
         }
         return moves
     }
 
-    private fun checkBoard() : Boolean {
-        if (board.checkForWinner()) {
-            //gameState?.hasWinner(currentPlayer.toString())
+    private fun checkAndChangePlayer() : Boolean {
+        if (checkBoard()) {
             return true
         }
 
-        if (board.isFull()) {
-            //gameState?.fullBoard()
+        changePlayer()
+        return false
+    }
+
+    private fun checkBoard() : Boolean {
+        if (board.checkForWinner() || board.isFull()) {
             return true
         }
+
         return false
     }
 
@@ -49,7 +59,6 @@ class Game(botPlayer: Boolean, numberOfRows: Int) {
 
     fun checkForWinner() : Boolean {
         if (board.checkForWinner()) {
-            board.resetCells()
             return true
         }
         return false
@@ -57,21 +66,12 @@ class Game(botPlayer: Boolean, numberOfRows: Int) {
 
     fun checkBoardIsFull() : Boolean {
         if (board.isFull()) {
-            //gameState?.fullBoard()
-            board.resetCells()
             return true
         }
         return false
     }
 
-    fun getBotMove() : Pair<Int, Int> {
-        return botMove
+    fun resetBoard() {
+        board.resetCells()
     }
-
-
-//    interface GameStatesListener {
-//        fun hasWinner(winner: String)
-//        fun fullBoard()
-//        fun changeView(x: Int, y: Int)
-//    }
 }

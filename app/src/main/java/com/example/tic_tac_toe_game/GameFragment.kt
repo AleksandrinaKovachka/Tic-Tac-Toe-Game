@@ -21,7 +21,7 @@ import com.example.tic_tac_toe_game.viewModels.GameViewModel
  */
 class GameFragment : Fragment(), TicTacToeView.CellPressedListener {
 
-    private lateinit var gameViewModel: GameViewModel //= ViewModelProvider(this).get(GameViewModel::class.java)
+    private lateinit var gameViewModel: GameViewModel
 
     private var _binding: FragmentGameBinding? = null
     private val binding get() = _binding!!
@@ -62,26 +62,14 @@ class GameFragment : Fragment(), TicTacToeView.CellPressedListener {
         }
 
         if (gameViewModel.hasWinner) {
-            binding.information.text = "Winner ${gameViewModel.getCurrentPlayer()}"
+            binding.information.text = "Winner is ${gameViewModel.getCurrentPlayer()}`s player\n${gameViewModel.getCurrentPlayer()}`s turn"
             binding.ticTacToeView.resetView()
+            gameViewModel.resetBoard()
         } else if (gameViewModel.isFull) {
             binding.information.text = "Equality"
+            //random first player
             binding.ticTacToeView.resetView()
+            gameViewModel.resetBoard()
         }
-
-//        Toast.makeText(context, "is new board: ${gameViewModel.newBoard}", Toast.LENGTH_LONG).show()
-//        if (gameViewModel.newBoard) {
-//            binding.ticTacToeView.fillCell(x, y, gameViewModel.getCurrentPlayer())
-//            //if is bot
-//            if (gameViewModel.isBotGame) {
-//                binding.ticTacToeView.fillCell(gameViewModel.botMove.first, gameViewModel.botMove.second, gameViewModel.getCurrentPlayer())
-//            }
-//        }
     }
-
-    //check if have new board - custom view to make changes
-    //check if have winner - custom view to clear board
-    //check if board is full - custom view to clear board
-
-
 }
