@@ -1,8 +1,9 @@
 package com.example.tic_tac_toe_game.game_classes
 
-class Board(private val numberOfRows: Int) {
+class Board(numberOfRows: Int) {
     private val count = numberOfRows
     private var cells = Array(count) {Array(count) {CellState.EMPTY} }
+    private lateinit var winnerCells: Pair<String, Int>
 
     fun makeMove(x: Int, y: Int, state: CellState) : Boolean {
         if (cells[x][y] == CellState.EMPTY) {
@@ -14,6 +15,11 @@ class Board(private val numberOfRows: Int) {
 
     fun resetCells() {
         cells = Array(count) {Array(count) {CellState.EMPTY} }
+        winnerCells = Pair("", -1)
+    }
+
+    fun getWinnerCells() : Pair<String, Int> {
+        return winnerCells
     }
 
     fun checkForWinner() : Boolean {
@@ -34,6 +40,7 @@ class Board(private val numberOfRows: Int) {
                 }
             }
             if (haveWinner) {
+                winnerCells = Pair("h", i)
                 return true
             }
         }
@@ -52,6 +59,7 @@ class Board(private val numberOfRows: Int) {
                 }
             }
             if (haveWinner) {
+                winnerCells = Pair("v", j)
                 return true
             }
         }
@@ -65,7 +73,7 @@ class Board(private val numberOfRows: Int) {
                 return false
             }
         }
-
+        winnerCells = Pair("d", 0)
         return true
     }
 
@@ -79,6 +87,7 @@ class Board(private val numberOfRows: Int) {
             index -= 1
         }
 
+        winnerCells = Pair("sD", 2)
         return true
     }
 

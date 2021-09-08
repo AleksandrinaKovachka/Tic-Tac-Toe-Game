@@ -1,5 +1,6 @@
 package com.example.tic_tac_toe_game
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -20,6 +21,11 @@ class StatisticsFragment : Fragment() {
 
     private val binding get() = _binding!!
 
+    private var playerBot : Int = 0
+    private var bot : Int = 0
+    private var playerO : Int = 0
+    private var playerX : Int = 0
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,10 +42,12 @@ class StatisticsFragment : Fragment() {
         binding.onePlayerRecyclerView.layoutManager = GridLayoutManager(context, 2)
         binding.twoPlayerRecyclerView.layoutManager = GridLayoutManager(context, 2)
 
+        loadData()
+
         val onePlayerAdapter = ScoreAdapter()
         binding.onePlayerRecyclerView.adapter = onePlayerAdapter
 
-        val listOnePlayer = listOf("X", "1", "O", "0")
+        val listOnePlayer = listOf("X", bot.toString(), "O", playerBot.toString())
         lifecycle.coroutineScope.launch{
             onePlayerAdapter.submitList(listOnePlayer)
         }
@@ -47,7 +55,7 @@ class StatisticsFragment : Fragment() {
         val twoPlayerAdapter = ScoreAdapter()
         binding.twoPlayerRecyclerView.adapter = twoPlayerAdapter
 
-        val listTwoPlayer = listOf("X", "1", "O", "0")
+        val listTwoPlayer = listOf("X", playerX.toString(), "O", playerO.toString())
         lifecycle.coroutineScope.launch{
             twoPlayerAdapter.submitList(listTwoPlayer)
         }
@@ -56,5 +64,21 @@ class StatisticsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun loadData() {
+        val preferences = this.activity?.getSharedPreferences("Game_Statistics", Context.MODE_PRIVATE)
+        if (preferences != null) {
+            playerBot = preferences.getInt("PlayerWithBot", 0)
+        }
+        if (preferences != null) {
+            bot = preferences.getInt("Bot", 0)
+        }
+        if (preferences != null) {
+            playerO = preferences.getInt("PlayerO", 0)
+        }
+        if (preferences != null) {
+            playerX = preferences.getInt("PlayerX", 0)
+        }
     }
 }

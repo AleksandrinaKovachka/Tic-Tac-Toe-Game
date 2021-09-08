@@ -1,24 +1,19 @@
 package com.example.tic_tac_toe_game
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.example.tic_tac_toe_game.custom_view.TicTacToeView
 import com.example.tic_tac_toe_game.databinding.FragmentGameBinding
-import com.example.tic_tac_toe_game.game_classes.Game
 import com.example.tic_tac_toe_game.viewModels.GameViewModel
+import kotlinx.coroutines.*
+import java.util.concurrent.TimeUnit
 
-/**
- * A simple [Fragment] subclass as the second destination in the navigation.
- */
 class GameFragment : Fragment(), TicTacToeView.CellPressedListener {
 
     private lateinit var gameViewModel: GameViewModel
@@ -56,20 +51,53 @@ class GameFragment : Fragment(), TicTacToeView.CellPressedListener {
         val moves = gameViewModel.makeMove(x, y)
         if (moves.isNotEmpty()) {
             binding.ticTacToeView.fillCell(moves)
-            binding.information.text = "${gameViewModel.getCurrentPlayer()}`s turn"//gameViewModel.getCurrentPlayer()
+            binding.information.text = "${gameViewModel.getCurrentPlayer()}`s turn"
         } else {
             binding.information.text = "Cell is already selected\n${gameViewModel.getCurrentPlayer()}`s turn"
         }
 
         if (gameViewModel.hasWinner) {
-            binding.information.text = "Winner is ${gameViewModel.getCurrentPlayer()}`s player\n${gameViewModel.getCurrentPlayer()}`s turn"
-            binding.ticTacToeView.resetView()
-            gameViewModel.resetBoard()
+            saveWinnerScore()
+            binding.ticTacToeView.drawWinnerLine(gameViewModel.winnerCells)
+            //Log.i("TAG", "Test winner cells: ${gameViewModel.winnerCells}")
+            resetGame("Winner is ${gameViewModel.getCurrentPlayer()}`s player")
         } else if (gameViewModel.isFull) {
-            binding.information.text = "Equality"
-            //random first player
-            binding.ticTacToeView.resetView()
-            gameViewModel.resetBoard()
+            resetGame("Equality")
+            gameViewModel.resetFirstPlayer()
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun resetGame(message: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            delay(TimeUnit.SECONDS.toMillis(3))
+            withContext(Dispatchers.Main) {
+                binding.ticTacToeView.resetView()
+                gameViewModel.resetBoard()
+                binding.information.text = "${gameViewModel.getCurrentPlayer()}`s turn"
+            }
+        }
+        binding.information.text = message
+    }
+
+    private fun saveWinnerScore() {
+        val name = if (gameViewModel.isBot) {
+            if (gameViewModel.getCurrentPlayer() == "O") {
+                "PlayerWithBot"
+            } else {
+                "Bot"
+            }
+        } else {
+            "Player${gameViewModel.getCurrentPlayer()}"
+        }
+
+        val preferences = this.activity?.getSharedPreferences("Game_Statistics", Context.MODE_PRIVATE)
+        val total = preferences?.getInt(name, 0)
+        val editor = preferences?.edit()
+        editor?.apply {
+            if (total != null) {
+                putInt(name, total + 1)
+            }
+        }?.apply()
     }
 }

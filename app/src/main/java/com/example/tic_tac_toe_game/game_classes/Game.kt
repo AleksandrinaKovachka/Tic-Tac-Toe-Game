@@ -1,7 +1,5 @@
 package com.example.tic_tac_toe_game.game_classes
 
-import android.widget.Toast
-
 class Game(botPlayer: Boolean, numberOfRows: Int) {
     private val board = Board(numberOfRows)
     private var currentPlayer = CellState.O
@@ -31,19 +29,11 @@ class Game(botPlayer: Boolean, numberOfRows: Int) {
     }
 
     private fun checkAndChangePlayer() : Boolean {
-        if (checkBoard()) {
-            return true
-        }
-
-        changePlayer()
-        return false
-    }
-
-    private fun checkBoard() : Boolean {
         if (board.checkForWinner() || board.isFull()) {
             return true
         }
 
+        changePlayer()
         return false
     }
 
@@ -73,5 +63,20 @@ class Game(botPlayer: Boolean, numberOfRows: Int) {
 
     fun resetBoard() {
         board.resetCells()
+    }
+
+    fun getWinnerCells() : Pair<String, Int> {
+        return board.getWinnerCells()
+    }
+
+    fun changePlayerInNewGame() {
+        val firstPlayer = (0..100).random()
+        if (firstPlayer <= 50) {
+            currentPlayer = CellState.O
+            previousPlayer = CellState.X
+        } else {
+            currentPlayer = CellState.X
+            previousPlayer = CellState.O
+        }
     }
 }

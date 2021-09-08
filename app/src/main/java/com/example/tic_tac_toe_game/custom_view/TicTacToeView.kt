@@ -21,6 +21,8 @@ class TicTacToeView : View {
     constructor(ctx: Context, attrs: AttributeSet) : super(ctx, attrs)
 
     private val paint = Paint()
+    private val linePaint = Paint()
+    private val textPaint = Paint()
     private var path = Path()
     private val X_PARTITION_RATIO = 1 / 3f
     private val Y_PARTITION_RATIO = 1 / 3f
@@ -28,7 +30,7 @@ class TicTacToeView : View {
     private lateinit var board: Array<Array<Rect>>
     private lateinit var boardStates: Array<Array<String>>
 
-    private val textPaint = Paint()
+    private var hasLine : Boolean = false
 
     var cellPressListener: CellPressedListener? = null
 
@@ -45,6 +47,8 @@ class TicTacToeView : View {
 
     private fun init() {
         paint.isAntiAlias = true
+        linePaint.isAntiAlias = paint.isAntiAlias
+        linePaint.strokeWidth = paint.strokeWidth
         textPaint.isAntiAlias = true
         textPaint.textSize = resources.displayMetrics.scaledDensity * 70
 
@@ -67,6 +71,10 @@ class TicTacToeView : View {
         drawVerticalLines(canvas)
         drawHorizontalLines(canvas)
         drawBoard(canvas)
+
+        if (hasLine) {
+            canvas.drawPath(path, linePaint)
+        }
     }
 
     private fun drawBoard(canvas: Canvas) {
@@ -150,6 +158,40 @@ class TicTacToeView : View {
     fun resetView() {
         boardStates = Array(3) { Array(3) { "" } }
         path.reset()
+        invalidate()
+    }
+
+    fun drawWinnerLine(winnerInfo: Pair<String, Int>) {
+        var centerX : Float = 0f
+        var centerY : Float = 0f
+        var centerDownX : Float = 0f
+        var centerDownY : Float = 0f
+        if (winnerInfo.first == "h") {
+            centerX = board[winnerInfo.second][0].exactCenterX()
+            centerY = board[winnerInfo.second][0].exactCenterY()
+            centerDownX = board[winnerInfo.second][numberOfRows - 1].exactCenterX()
+            centerDownY = board[winnerInfo.second][numberOfRows - 1].exactCenterY()
+        } else if (winnerInfo.first == "v") {
+            centerX = board[0][winnerInfo.second].exactCenterX()
+            centerY = board[0][winnerInfo.second].exactCenterY()
+            centerDownX = board[numberOfRows - 1][winnerInfo.second].exactCenterX()
+            centerDownY = board[numberOfRows - 1][winnerInfo.second].exactCenterY()
+        } else if (winnerInfo.first == "d") {
+            centerX = board[0][0].exactCenterX()
+            centerY = board[0][0].exactCenterY()
+            centerDownX = board[numberOfRows - 1][numberOfRows - 1].exactCenterX()
+            centerDownY = board[numberOfRows - 1][numberOfRows - 1].exactCenterY()
+        } else if (winnerInfo.first == "sD") {
+            centerX = board[0][winnerInfo.second].exactCenterX()
+            centerY = board[0][winnerInfo.second].exactCenterY()
+            centerDownX = board[numberOfRows - 1][winnerInfo.second].exactCenterX()
+            centerDownY = board[numberOfRows - 1][winnerInfo.second].exactCenterY()
+        }
+
+        path.reset()
+        path.moveTo(centerX, centerY)
+        path.lineTo(centerDownX, centerDownY)
+        hasLine = true
         invalidate()
     }
 

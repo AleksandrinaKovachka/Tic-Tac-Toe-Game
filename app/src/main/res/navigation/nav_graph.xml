@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/EntryFragment"
         android:name="com.example.tic_tac_toe_game.EntryFragment"
-        android:label="@string/first_fragment_label"
+        android:label="Tic Tac Toe"
         tools:layout="@layout/fragment_entry">
 
         <action
@@ -24,7 +24,7 @@
     <fragment
         android:id="@+id/GameFragment"
         android:name="com.example.tic_tac_toe_game.GameFragment"
-        android:label="@string/second_fragment_label"
+        android:label="Game"
         tools:layout="@layout/fragment_game">
 
         <action
@@ -34,8 +34,8 @@
     <fragment
         android:id="@+id/statisticsFragment"
         android:name="com.example.tic_tac_toe_game.StatisticsFragment"
-        android:label="fragment_statistics"
-        tools:layout="@layout/fragment_statistics" >
+        android:label="@string/statistics"
+        tools:layout="@layout/fragment_statistics">
         <action
             android:id="@+id/action_statisticsFragment_to_EntryFragment"
             app:destination="@id/EntryFragment" />
@@ -43,8 +43,8 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.tic_tac_toe_game.SettingsFragment"
-        android:label="fragment_settings"
-        tools:layout="@layout/fragment_settings" >
+        android:label="@string/settings"
+        tools:layout="@layout/fragment_settings">
         <action
             android:id="@+id/action_settingsFragment_to_EntryFragment"
             app:destination="@id/EntryFragment" />

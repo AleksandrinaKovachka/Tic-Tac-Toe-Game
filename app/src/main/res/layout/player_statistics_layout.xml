@@ -8,7 +8,7 @@
     android:layout_marginEnd="10dp"
     android:layout_marginBottom="5dp"
     android:background="#A6D2D7"
-    app:cardBackgroundColor="#A6D2D7"
+    app:cardBackgroundColor="@color/green_light"
     app:contentPadding="5dp">
 
     <TextView

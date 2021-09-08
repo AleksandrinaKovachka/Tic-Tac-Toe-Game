@@ -19,4 +19,6 @@
     <string name="two_player_mode">Two player mode</string>
     <string name="reset_scores">Reset scores</string>
     <string name="reset">Reset</string>
+    <string name="player_bot"><![CDATA[Player & Bot]]></string>
+    <string name="player_player"><![CDATA[Player & Player]]></string>
 </resources>
