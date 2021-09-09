@@ -8,9 +8,6 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.tic_tac_toe_game.databinding.FragmentEntryBinding
 
-/**
- * A simple [Fragment] subclass as the default destination in the navigation.
- */
 class EntryFragment : Fragment() {
 
     private var _binding: FragmentEntryBinding? = null

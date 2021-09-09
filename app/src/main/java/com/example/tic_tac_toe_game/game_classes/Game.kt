@@ -1,10 +1,10 @@
 package com.example.tic_tac_toe_game.game_classes
 
-class Game(botPlayer: Boolean, numberOfRows: Int) {
+class Game(numberOfRows: Int) {
     private val board = Board(numberOfRows)
     private var currentPlayer = CellState.O
     private var previousPlayer = CellState.X
-    private val isBot = botPlayer
+    private var isBot = true
 
     fun makeMove(x: Int, y: Int) : List<Move> {
         val moves : MutableList<Move> = mutableListOf()
@@ -78,5 +78,9 @@ class Game(botPlayer: Boolean, numberOfRows: Int) {
             currentPlayer = CellState.X
             previousPlayer = CellState.O
         }
+    }
+
+    fun changePlayerMode(isBotMode: Boolean) {
+        isBot = isBotMode
     }
 }

@@ -1,6 +1,5 @@
 package com.example.tic_tac_toe_game.custom_view
 
-import android.R.attr.path
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
@@ -11,6 +10,8 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import com.example.tic_tac_toe_game.R
 import com.example.tic_tac_toe_game.game_classes.Move
 
 
@@ -21,14 +22,14 @@ class TicTacToeView : View {
     constructor(ctx: Context, attrs: AttributeSet) : super(ctx, attrs)
 
     private val paint = Paint()
-    private val linePaint = Paint()
     private val textPaint = Paint()
     private var path = Path()
-    private val X_PARTITION_RATIO = 1 / 3f
-    private val Y_PARTITION_RATIO = 1 / 3f
+    private val xPartition = 1 / 3f
+    private val yPartition = 1 / 3f
     private val numberOfRows = 3
     private lateinit var board: Array<Array<Rect>>
     private lateinit var boardStates: Array<Array<String>>
+    private lateinit var winnerCells: Pair<String, Int>
 
     private var hasLine : Boolean = false
 
@@ -36,7 +37,7 @@ class TicTacToeView : View {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val size = Math.min(measuredHeight, measuredWidth)
+        val size = measuredHeight.coerceAtMost(measuredWidth)
         setMeasuredDimension(size, size)
     }
 
@@ -47,16 +48,16 @@ class TicTacToeView : View {
 
     private fun init() {
         paint.isAntiAlias = true
-        linePaint.isAntiAlias = paint.isAntiAlias
-        linePaint.strokeWidth = paint.strokeWidth
+        paint.color = ContextCompat.getColor(context, R.color.dark_green)
+        paint.strokeWidth = resources.displayMetrics.density * 5
         textPaint.isAntiAlias = true
         textPaint.textSize = resources.displayMetrics.scaledDensity * 70
 
         board = Array(3) { Array(3) { Rect() } }
         boardStates = Array(3) { Array(3) { "" } }
 
-        val xUnit = (width * X_PARTITION_RATIO).toInt()
-        val yUnit = (height * Y_PARTITION_RATIO).toInt()
+        val xUnit = (width * xPartition).toInt()
+        val yUnit = (height * yPartition).toInt()
 
         for (j in 0 until numberOfRows) {
             for (i in 0 until numberOfRows) {
@@ -73,8 +74,45 @@ class TicTacToeView : View {
         drawBoard(canvas)
 
         if (hasLine) {
-            canvas.drawPath(path, linePaint)
+            drawLine(canvas)
         }
+    }
+
+    private fun drawLine(canvas: Canvas) {
+        var centerX = 0f
+        var centerY  = 0f
+        var centerDownX  = 0f
+        var centerDownY  = 0f
+        when (winnerCells.first) {
+            "v" -> {
+                centerX = board[winnerCells.second][0].exactCenterX()
+                centerY = board[winnerCells.second][0].exactCenterY()
+                centerDownX = board[winnerCells.second][numberOfRows - 1].exactCenterX()
+                centerDownY = board[winnerCells.second][numberOfRows - 1].exactCenterY()
+            }
+            "h" -> {
+                centerX = board[0][winnerCells.second].exactCenterX()
+                centerY = board[0][winnerCells.second].exactCenterY()
+                centerDownX = board[numberOfRows - 1][winnerCells.second].exactCenterX()
+                centerDownY = board[numberOfRows - 1][winnerCells.second].exactCenterY()
+            }
+            "d" -> {
+                centerX = board[0][0].exactCenterX()
+                centerY = board[0][0].exactCenterY()
+                centerDownX = board[numberOfRows - 1][numberOfRows - 1].exactCenterX()
+                centerDownY = board[numberOfRows - 1][numberOfRows - 1].exactCenterY()
+            }
+            "sD" -> {
+                centerX = board[0][winnerCells.second].exactCenterX()
+                centerY = board[0][winnerCells.second].exactCenterY()
+                centerDownX = board[numberOfRows - 1][0].exactCenterX()
+                centerDownY = board[numberOfRows - 1][0].exactCenterY()
+            }
+        }
+
+        canvas.drawLine(centerX, centerY, centerDownX, centerDownY, paint)
+
+        hasLine = false
     }
 
     private fun drawBoard(canvas: Canvas) {
@@ -88,13 +126,13 @@ class TicTacToeView : View {
     }
 
     private fun drawVerticalLines(canvas: Canvas) {
-        canvas.drawLine(width * X_PARTITION_RATIO, 0f, width * X_PARTITION_RATIO, height.toFloat(), paint)
-        canvas.drawLine(width * (2 * X_PARTITION_RATIO), 0f, width * (2 * X_PARTITION_RATIO), height.toFloat(), paint)
+        canvas.drawLine(width * xPartition, 0f, width * xPartition, height.toFloat(), paint)
+        canvas.drawLine(width * (2 * xPartition), 0f, width * (2 * xPartition), height.toFloat(), paint)
     }
 
     private fun drawHorizontalLines(canvas: Canvas) {
-        canvas.drawLine(0f, height * Y_PARTITION_RATIO, width.toFloat(), height * Y_PARTITION_RATIO, paint)
-        canvas.drawLine(0f, height * (2 * Y_PARTITION_RATIO), width.toFloat(), height * (2 * Y_PARTITION_RATIO), paint)
+        canvas.drawLine(0f, height * yPartition, width.toFloat(), height * yPartition, paint)
+        canvas.drawLine(0f, height * (2 * yPartition), width.toFloat(), height * (2 * yPartition), paint)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -110,10 +148,10 @@ class TicTacToeView : View {
 
     private fun getNumberOfSelectedCell(x: Float, y: Float) : Pair<Int, Int> {
         val xCoord= when {
-            y < height * Y_PARTITION_RATIO -> {
+            y < height * yPartition -> {
                 0
             }
-            y < height * (2 * Y_PARTITION_RATIO) -> {
+            y < height * (2 * yPartition) -> {
                 1
             }
             else -> {
@@ -122,10 +160,10 @@ class TicTacToeView : View {
         }
 
         val yCoord = when {
-            x < width * X_PARTITION_RATIO -> {
+            x < width * xPartition -> {
                 0
             }
-            x < width * (2 * X_PARTITION_RATIO) -> {
+            x < width * (2 * xPartition) -> {
                 1
             }
             else -> {
@@ -162,35 +200,8 @@ class TicTacToeView : View {
     }
 
     fun drawWinnerLine(winnerInfo: Pair<String, Int>) {
-        var centerX : Float = 0f
-        var centerY : Float = 0f
-        var centerDownX : Float = 0f
-        var centerDownY : Float = 0f
-        if (winnerInfo.first == "h") {
-            centerX = board[winnerInfo.second][0].exactCenterX()
-            centerY = board[winnerInfo.second][0].exactCenterY()
-            centerDownX = board[winnerInfo.second][numberOfRows - 1].exactCenterX()
-            centerDownY = board[winnerInfo.second][numberOfRows - 1].exactCenterY()
-        } else if (winnerInfo.first == "v") {
-            centerX = board[0][winnerInfo.second].exactCenterX()
-            centerY = board[0][winnerInfo.second].exactCenterY()
-            centerDownX = board[numberOfRows - 1][winnerInfo.second].exactCenterX()
-            centerDownY = board[numberOfRows - 1][winnerInfo.second].exactCenterY()
-        } else if (winnerInfo.first == "d") {
-            centerX = board[0][0].exactCenterX()
-            centerY = board[0][0].exactCenterY()
-            centerDownX = board[numberOfRows - 1][numberOfRows - 1].exactCenterX()
-            centerDownY = board[numberOfRows - 1][numberOfRows - 1].exactCenterY()
-        } else if (winnerInfo.first == "sD") {
-            centerX = board[0][winnerInfo.second].exactCenterX()
-            centerY = board[0][winnerInfo.second].exactCenterY()
-            centerDownX = board[numberOfRows - 1][winnerInfo.second].exactCenterX()
-            centerDownY = board[numberOfRows - 1][winnerInfo.second].exactCenterY()
-        }
+        winnerCells = winnerInfo
 
-        path.reset()
-        path.moveTo(centerX, centerY)
-        path.lineTo(centerDownX, centerDownY)
         hasLine = true
         invalidate()
     }

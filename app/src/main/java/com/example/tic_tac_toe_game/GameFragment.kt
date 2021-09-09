@@ -25,7 +25,6 @@ class GameFragment : Fragment(), TicTacToeView.CellPressedListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         gameViewModel = ViewModelProvider(this).get(GameViewModel::class.java)
 
         _binding = FragmentGameBinding.inflate(inflater, container, false)
@@ -37,6 +36,8 @@ class GameFragment : Fragment(), TicTacToeView.CellPressedListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupPlayerMode()
+
         binding.ticTacToeView.cellPressListener = this
         binding.information.text = "${gameViewModel.getCurrentPlayer()}`s turn"
     }
@@ -44,6 +45,20 @@ class GameFragment : Fragment(), TicTacToeView.CellPressedListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun setupPlayerMode() {
+        val preferences = this.activity?.getSharedPreferences("Player_Mode", Context.MODE_PRIVATE)
+        val mode = preferences?.getBoolean("isBot", true)
+        gameViewModel.isBot = mode!!
+        val botOrPlayer = if (mode) {
+            "Bot"
+        } else {
+            "Player"
+        }
+        binding.playerModeTextView.text = "Player & $botOrPlayer"
+        gameViewModel.changePlayerMode(mode)
     }
 
     @SuppressLint("SetTextI18n")
@@ -59,7 +74,6 @@ class GameFragment : Fragment(), TicTacToeView.CellPressedListener {
         if (gameViewModel.hasWinner) {
             saveWinnerScore()
             binding.ticTacToeView.drawWinnerLine(gameViewModel.winnerCells)
-            //Log.i("TAG", "Test winner cells: ${gameViewModel.winnerCells}")
             resetGame("Winner is ${gameViewModel.getCurrentPlayer()}`s player")
         } else if (gameViewModel.isFull) {
             resetGame("Equality")

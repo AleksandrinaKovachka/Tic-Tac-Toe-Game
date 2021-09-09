@@ -21,4 +21,5 @@
     <string name="reset">Reset</string>
     <string name="player_bot"><![CDATA[Player & Bot]]></string>
     <string name="player_player"><![CDATA[Player & Player]]></string>
+    <string name="player_mode">Player mode</string>
 </resources>
